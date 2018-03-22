@@ -1,3 +1,11 @@
+Fork from bitcoin for modify for bitcore v4.1.1
+
+Because the bitcore latest stable version v4.1.1 just just the bitcoin core v0.12 for blockchain basic system. The version is so old.
+But use the new version need some modify in code for some bitcore-node 's rpc support.
+
+So I fork from the bitcoin v0.16 version and modify the code for bitcore.
+=====================================
+
 Bitcoin Core integration/staging tree
 =====================================
 
