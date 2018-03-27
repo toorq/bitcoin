@@ -6,6 +6,7 @@
 #include <rpc/blockchain.h>
 
 #include <amount.h>
+#include <base58.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <checkpoints.h>
@@ -17,6 +18,12 @@
 #include <policy/policy.h>
 #include <primitives/transaction.h>
 #include <rpc/server.h>
+
+#include <script/script.h>
+#include <script/script_error.h>
+#include <script/sign.h>
+#include <script/standard.h>
+
 #include <streams.h>
 #include <sync.h>
 #include <txdb.h>
@@ -134,8 +141,8 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
     UniValue deltas(UniValue::VARR);
 
     for (unsigned int i = 0; i < block.vtx.size(); i++) {
-        const CTransaction &tx = block.vtx[i];
-        const uint256 txhash = tx.GetHash();
+        const CTransactionRef ptx = block.vtx[i];
+        const uint256 txhash = ptx->GetHash();
 
         UniValue entry(UniValue::VOBJ);
         entry.push_back(Pair("txid", txhash.GetHex()));
@@ -143,10 +150,9 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
 
         UniValue inputs(UniValue::VARR);
 
-        if (!tx.IsCoinBase()) {
-
-            for (size_t j = 0; j < tx.vin.size(); j++) {
-                const CTxIn input = tx.vin[j];
+        if (!ptx->IsCoinBase()) {
+            for (size_t j = 0; j < ptx->vin.size(); j++) {
+                const CTxIn input = ptx->vin[j];
 
                 UniValue delta(UniValue::VOBJ);
 
@@ -178,17 +184,16 @@ UniValue blockToDeltasJSON(const CBlock& block, const CBlockIndex* blockindex)
 
         UniValue outputs(UniValue::VARR);
 
-        for (unsigned int k = 0; k < tx.vout.size(); k++) {
-            const CTxOut &out = tx.vout[k];
+        for (unsigned int k = 0; k < ptx->vout.size(); k++) {
+            const CTxOut &out = ptx->vout[k];
 
             UniValue delta(UniValue::VOBJ);
 
             if (out.scriptPubKey.IsPayToScriptHash()) {
-                vector<unsigned char> hashBytes(out.scriptPubKey.begin()+2, out.scriptPubKey.begin()+22);
+                std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+2, out.scriptPubKey.begin()+22);
                 delta.push_back(Pair("address", CBitcoinAddress(CScriptID(uint160(hashBytes))).ToString()));
-
             } else if (out.scriptPubKey.IsPayToPublicKeyHash()) {
-                vector<unsigned char> hashBytes(out.scriptPubKey.begin()+3, out.scriptPubKey.begin()+23);
+                std::vector<unsigned char> hashBytes(out.scriptPubKey.begin()+3, out.scriptPubKey.begin()+23);
                 delta.push_back(Pair("address", CBitcoinAddress(CKeyID(uint160(hashBytes))).ToString()));
             } else {
                 continue;
@@ -547,7 +552,7 @@ UniValue mempoolToJSON(bool fVerbose)
 UniValue getblockdeltas(const JSONRPCRequest& request)
 {
 	if (request.fHelp || request.params.size() != 1)
-        throw runtime_error("");
+        throw std::runtime_error("");
 
     std::string strHash = request.params[0].get_str();
     uint256 hash(uint256S(strHash));
@@ -571,7 +576,7 @@ UniValue getblockdeltas(const JSONRPCRequest& request)
 UniValue getblockhashes(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() < 2)
-        throw runtime_error(
+        throw std::runtime_error(
             "getblockhashes timestamp\n"
             "\nReturns array of hashes of blocks within the timestamp range provided.\n"
             "\nArguments:\n"
@@ -1828,9 +1833,8 @@ static const CRPCCommand commands[] =
     { "blockchain",         "getblock",               &getblock,               {"blockhash","verbosity|verbose"} },
 
 	// tq : add for bitcore fix rpc call
-	{ "blockchain",         "getblockdeltas",         &getblockdeltas,         false },
-	{ "blockchain",         "getblockhashes",         &getblockhashes,         true  },
-	{ "blockchain",         "getspentinfo",           &getspentinfo,           false },
+	{ "blockchain",         "getblockdeltas",         &getblockdeltas,         {"hash"} },
+	{ "blockchain",         "getblockhashes",         &getblockhashes,         {"timestamp_high", "timestamp_low", "options"}},
 	// end...
 
     { "blockchain",         "getblockhash",           &getblockhash,           {"height"} },

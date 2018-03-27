@@ -282,6 +282,7 @@ public:
     void ForceSetArg(const std::string& strArg, const std::string& strValue);
 };
 
+
 extern ArgsManager gArgs;
 
 /**

@@ -293,8 +293,22 @@ public:
     //! Check whether all prevouts of the transaction are present in the UTXO set represented by this view
     bool HaveInputs(const CTransaction& tx) const;
 
+	// tq: added for bitcore
+    //const CTxOut &GetOutputFor(const CTxIn& input) const;
+
+	/**
+     * Return a pointer to CCoins in the cache, or NULL if not found. This is
+     * more efficient than GetCoins. Modifications to other cache entries are
+     * allowed while accessing the returned pointer.
+     */
+    //const CCoins* AccessCoins(const uint256 &txid) const;
+
 private:
     CCoinsMap::iterator FetchCoin(const COutPoint &outpoint) const;
+
+	// tq : for bitcore , will deleted later
+	//CCoinsMap::iterator FetchCoins(const uint256 &txid);
+	//CCoinsMap::const_iterator FetchCoins(const uint256 &txid) const;
 };
 
 //! Utility function to add all of a transaction's outputs to a cache.

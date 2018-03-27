@@ -143,6 +143,28 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "echojson", 9, "arg9" },
     { "rescanblockchain", 0, "start_height"},
     { "rescanblockchain", 1, "stop_height"},
+
+	// tq : added for bitcore
+
+	{ "getblockhashes", 0, "timestamp_start"},
+    { "getblockhashes", 1, "timestamp_low"},
+    { "getblockhashes", 2, "options"},
+    { "getspentinfo", 0, "txid"},
+	{ "getspentinfo", 1, "index"},
+
+	{ "getaddresstxids", 0, "address"},
+	{ "getaddresstxids", 1, "start"},
+	{ "getaddresstxids", 2, "end"},
+
+    { "getaddressbalance", 0, "address"},
+
+	{ "getaddressdeltas", 0, "address"},
+	{ "getaddressdeltas", 1, "start"},
+	{ "getaddressdeltas", 2, "end"},
+	{ "getaddressdeltas", 3, "chainInfo"},
+
+    { "getaddressutxos", 0, "address"},
+    { "getaddressmempool", 0, "address"},
 };
 
 class CRPCConvertTable

@@ -17,6 +17,9 @@
 #include <rpc/server.h>
 #include <rpc/util.h>
 #include <timedata.h>
+
+#include <txmempool.h>
+
 #include <util.h>
 #include <utilstrencodings.h>
 #ifdef ENABLE_WALLET
@@ -697,7 +700,7 @@ bool timestampSort(std::pair<CMempoolAddressDeltaKey, CMempoolAddressDelta> a,
 UniValue getaddressmempool(const JSONRPCRequest& request)
 {
 	if (request.fHelp || request.params.size() != 1)
-        throw runtime_error(
+        throw std::runtime_error(
             "getaddressmempool\n"
             "\nReturns all mempool deltas for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -769,7 +772,7 @@ UniValue getaddressmempool(const JSONRPCRequest& request)
 UniValue getaddressutxos(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
-        throw runtime_error(
+        throw std::runtime_error(
             "getaddressutxos\n"
             "\nReturns all unspent outputs for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -855,8 +858,8 @@ UniValue getaddressutxos(const JSONRPCRequest& request)
 //UniValue getaddressdeltas(const UniValue& params, bool fHelp)
 UniValue getaddressdeltas(const JSONRPCRequest& request)
 {
-    if (fHelp || params.size() != 1 || !params[0].isObject())
-        throw runtime_error(
+    if (request.fHelp || request.params.size() != 1 || !request.params[0].isObject())
+        throw std::runtime_error(
             "getaddressdeltas\n"
             "\nReturns all changes for an address (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -982,7 +985,7 @@ UniValue getaddressdeltas(const JSONRPCRequest& request)
 UniValue getaddressbalance(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
-        throw runtime_error(
+        throw std::runtime_error(
             "getaddressbalance\n"
             "\nReturns the balance for an address(es) (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -1039,7 +1042,7 @@ UniValue getaddressbalance(const JSONRPCRequest& request)
 UniValue getaddresstxids(const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
-        throw runtime_error(
+        throw std::runtime_error(
             "getaddresstxids\n"
             "\nReturns the txids for an address(es) (requires addressindex to be enabled).\n"
             "\nArguments:\n"
@@ -1124,7 +1127,7 @@ UniValue getspentinfo(const JSONRPCRequest& request)
 {
 
     if (request.fHelp || request.params.size() != 1 || !(request.params[0].isObject()))
-        throw runtime_error(
+        throw std::runtime_error(
             "getspentinfo\n"
             "\nReturns the txid and index where an output is spent.\n"
             "\nArguments:\n"
@@ -1179,11 +1182,13 @@ static const CRPCCommand commands[] =
     { "util",               "signmessagewithprivkey", &signmessagewithprivkey, {"privkey","message"} },
 
 	/* tq: added for bitcore rpc calls Address index */
-    { "addressindex",       "getaddressmempool",      &getaddressmempool,      true  },
-    { "addressindex",       "getaddressutxos",        &getaddressutxos,        false },
-    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false },
-    { "addressindex",       "getaddresstxids",        &getaddresstxids,        false },
-    { "addressindex",       "getaddressbalance",      &getaddressbalance,      false },
+    { "addressindex",       "getaddressmempool",      &getaddressmempool,      {"address"}  },
+    { "addressindex",       "getaddressutxos",        &getaddressutxos,        {"address"} },
+    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       {"address", "start", "end", "chainInfo"} },
+    { "addressindex",       "getaddresstxids",        &getaddresstxids,        {"address", "start", "end"} },
+    { "addressindex",       "getaddressbalance",      &getaddressbalance,      {"address"} },
+
+	{ "blockchain",         "getspentinfo",           &getspentinfo,           {"txid", "index"} },
 	// end..
 
     /* Not shown in help */

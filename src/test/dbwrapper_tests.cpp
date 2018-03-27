@@ -315,6 +315,49 @@ BOOST_AUTO_TEST_CASE(iterator_string_ordering)
     }
 }
 
+#if 0
+// tq : added for bitcore
+BOOST_AUTO_TEST_CASE(dbwrapper_compression)
+{
+    // Perform tests both with compression and without
+    for (int i = 0; i < 2; i++) {
+        bool compression = (bool)i;
+        path ph = temp_directory_path() / unique_path();
+        CDBWrapper dbw(ph, (1 << 20), true, false, false, compression);
+        char key = 'k';
+        uint256 in = GetRandHash();
+        uint256 res;
 
+        BOOST_CHECK(dbw.Write(key, in));
+        BOOST_CHECK(dbw.Read(key, res));
+        BOOST_CHECK_EQUAL(res.ToString(), in.ToString());
+    }
+}
 
+BOOST_AUTO_TEST_CASE(dbwrapper_maxopenfiles_64)
+{
+    path ph = temp_directory_path() / unique_path();
+    CDBWrapper dbw(ph, (1 << 20), true, false, false, false, 64);
+    char key = 'k';
+    uint256 in = GetRandHash();
+    uint256 res;
+
+    BOOST_CHECK(dbw.Write(key, in));
+    BOOST_CHECK(dbw.Read(key, res));
+    BOOST_CHECK_EQUAL(res.ToString(), in.ToString());
+}
+
+BOOST_AUTO_TEST_CASE(dbwrapper_maxopenfiles_1000)
+{
+    path ph = temp_directory_path() / unique_path();
+    CDBWrapper dbw(ph, (1 << 20), true, false, false, false, 1000);
+    char key = 'k';
+    uint256 in = GetRandHash();
+    uint256 res;
+
+    BOOST_CHECK(dbw.Write(key, in));
+    BOOST_CHECK(dbw.Read(key, res));
+    BOOST_CHECK_EQUAL(res.ToString(), in.ToString());
+}
+#endif
 BOOST_AUTO_TEST_SUITE_END()
