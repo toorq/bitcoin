@@ -422,11 +422,12 @@ void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewC
     LOCK(cs);
     const CTransaction& tx = entry.GetTx();
     std::vector<CMempoolAddressDeltaKey> inserted;
-#if 0
+
     uint256 txhash = tx.GetHash();
-    for (unsigned int j = 0; j < tx.vin.size(); j++) {
+	for (unsigned int j = 0; j < tx.vin.size(); j++) {
         const CTxIn input = tx.vin[j];
         const CTxOut &prevout = view.GetOutputFor(input);
+
         if (prevout.scriptPubKey.IsPayToScriptHash()) {
             std::vector<unsigned char> hashBytes(prevout.scriptPubKey.begin()+2, prevout.scriptPubKey.begin()+22);
             CMempoolAddressDeltaKey key(2, uint160(hashBytes), txhash, j, 1);
@@ -459,7 +460,6 @@ void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewC
     }
 
     mapAddressInserted.insert(std::make_pair(txhash, inserted));
-#endif
 }
 
 bool CTxMemPool::getAddressIndex(std::vector<std::pair<uint160, int> > &addresses,
@@ -498,7 +498,7 @@ void CTxMemPool::addSpentIndex(const CTxMemPoolEntry &entry, const CCoinsViewCac
 
     const CTransaction& tx = entry.GetTx();
     std::vector<CSpentIndexKey> inserted;
-#if 0
+
     uint256 txhash = tx.GetHash();
     for (unsigned int j = 0; j < tx.vin.size(); j++) {
         const CTxIn input = tx.vin[j];
@@ -526,7 +526,6 @@ void CTxMemPool::addSpentIndex(const CTxMemPoolEntry &entry, const CCoinsViewCac
     }
 
     mapSpentInserted.insert(std::make_pair(txhash, inserted));
-#endif
 }
 
 bool CTxMemPool::getSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value)

@@ -509,12 +509,14 @@ private:
     txlinksMap mapLinks;
 
 	// tq: added for bitcore
+    // To Save mapAddress Indexes.
 	typedef std::map<CMempoolAddressDeltaKey, CMempoolAddressDelta, CMempoolAddressDeltaKeyCompare> addressDeltaMap;
     addressDeltaMap mapAddress;
 
     typedef std::map<uint256, std::vector<CMempoolAddressDeltaKey> > addressDeltaMapInserted;
     addressDeltaMapInserted mapAddressInserted;
 
+    // for bitcore : to save mapSpentIndexes.
     typedef std::map<CSpentIndexKey, CSpentIndexValue, CSpentIndexKeyCompare> mapSpentIndex;
     mapSpentIndex mapSpent;
 

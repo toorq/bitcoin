@@ -220,41 +220,15 @@ unsigned int CCoinsViewCache::GetCacheSize() const {
     return cacheCoins.size();
 }
 
-/*
-CCoinsMap::const_iterator CCoinsViewCache::FetchCoins(const uint256 &txid) const {
-    CCoinsMap::iterator it = cacheCoins.find(txid);
-    if (it != cacheCoins.end())
-        return it;
-    CCoins tmp;
-    if (!base->GetCoins(txid, tmp))
-        return cacheCoins.end();
-    CCoinsMap::iterator ret = cacheCoins.insert(std::make_pair(txid, CCoinsCacheEntry())).first;
-    tmp.swap(ret->second.coins);
-    if (ret->second.coins.IsPruned()) {
-        // The parent only has an empty entry for this txid; we can consider our
-        // version as fresh.
-        ret->second.flags = CCoinsCacheEntry::FRESH;
-    }
-    cachedCoinsUsage += ret->second.coins.DynamicMemoryUsage();
-    return ret;
-}
-
-const CCoins* CCoinsViewCache::AccessCoins(const uint256 &txid) const {
-    CCoinsMap::const_iterator it = FetchCoins(txid);
-    if (it == cacheCoins.end()) {
-        return NULL;
-    } else {
-        return &it->second.coins;
-    }
-}
-
 const CTxOut &CCoinsViewCache::GetOutputFor(const CTxIn& input) const
 {
-    const CCoins* coins = AccessCoins(input.prevout.hash);
-    assert(coins && coins->IsAvailable(input.prevout.n));
-    return coins->vout[input.prevout.n];
+	const Coin *pcoin = &AccessCoin(input.prevout);
+
+	assert(pcoin);
+
+    return pcoin->out;
 }
-*/
+
 
 CAmount CCoinsViewCache::GetValueIn(const CTransaction& tx) const
 {

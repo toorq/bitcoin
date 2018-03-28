@@ -1706,7 +1706,6 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
                     spentIndex.push_back(std::make_pair(CSpentIndexKey(input.prevout.hash, input.prevout.n), CSpentIndexValue()));
                 }
 
-                #if 0 //tq bitcore toDo ....
                 if (fAddressIndex) {
                     const CTxOut &prevout = view.GetOutputFor(tx.vin[j]);
                     if (prevout.scriptPubKey.IsPayToScriptHash()) {
@@ -1730,7 +1729,6 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
                         continue;
                     }
                 } 
-                #endif
             }
             // At this point, all of txundo.vprevout should have been moved out.
         }
@@ -2093,7 +2091,6 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                  REJECT_INVALID, "bad-txns-nonfinal");
             }
 
-            #if 0  //tq bitcore toDo ....
 			if (fAddressIndex || fSpentIndex) {
                 for (size_t j = 0; j < tx.vin.size(); j++) {
                     const CTxIn input = tx.vin[j];
@@ -2126,7 +2123,6 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                     }
                 }
             }
-            #endif
         }
 
         // GetTransactionSigOpCost counts 3 types of sigops:

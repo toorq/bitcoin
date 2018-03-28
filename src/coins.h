@@ -294,7 +294,7 @@ public:
     bool HaveInputs(const CTransaction& tx) const;
 
 	// tq: added for bitcore
-    //const CTxOut &GetOutputFor(const CTxIn& input) const;
+    const CTxOut &GetOutputFor(const CTxIn& input) const;
 
 	/**
      * Return a pointer to CCoins in the cache, or NULL if not found. This is
