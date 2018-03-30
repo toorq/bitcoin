@@ -4,6 +4,10 @@ Because the bitcore latest stable version v4.1.1 just just the bitcoin core v0.1
 But use the new version need some modify in code for some bitcore-node 's rpc support.
 
 So I fork from the bitcoin v0.16 version and modify the code for bitcore.
+
+by toorq （James Chen)
+
+
 =====================================
 
 Bitcoin Core integration/staging tree
